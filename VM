@@ -1,0 +1,21 @@
+MACHINE MODEL
+ - Not a simulator. Not really an emulator either. 
+ - global variables: A, X, Y, SF, VF, BF, DF, ZF, CF, SP (data only), (no PC) 
+ - 64k memory: u8 data[65536]
+
+CODE MODEL
+ - no absolute code addressing 
+     (assembler allows jumps to defined labels)
+     (indirect jump not supported)
+ - code stack is separate from data stack (SP) and is inaccessible
+ - not relative branch distance limitations
+
+DATA MODEL
+ - same as 6502
+
+I/O
+ - ESC #0 -> reads stdin into A
+ - ESC #1 -> writes A to stdout
+ - ESC #2 -> sleep A tenths of a second
+ - ESC #3 -> terminate program (or RTS from top level)
+

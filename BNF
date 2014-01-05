@@ -1,0 +1,115 @@
+Unless noted otherwise, all matches are case-insensitive
+
+$$ := EOF
+$ := EOL
+
+translation-unit: (instruction? $)* $$
+
+instruction: (label ":")? mnemonic
+             "target" string  (passed to llvm as -march)
+             "org" expression
+            
+mnemonic: "adc" (imm | zp | zpx | abs | absx | absy | indx | indy)
+        | "and" (imm | zp | zpx | abs | absx | absy | indx | indy)
+        | "asl" (acc | zp | zpx | abs | absx)
+        | "bcc" label
+        | "bcs" label
+        | "beq" label
+        | "bit" (zp | abs)
+        | "bmi" label
+        | "bne" label
+        | "bpl" label
+        | "brk" imm?
+        | "bvc" label
+        | "bvs" label
+        | "clc"
+        | "cld"
+        | "cli"
+        | "clv"
+        | "cmp" (imm | zp | zpx | abs | absx | absy | indx | indy)
+        | "cpx" (imm | zp | abs)
+        | "cpy" (imm | zp | abs)
+        | "dec" (zp | zpx | abs | absx)
+        | "dex"
+        | "dey"
+        | "eor" (imm | zp | zpx | abs | absx | absy | indx | indy)
+        | "inc" (zp | zpx | abs | absx)
+        | "inx"
+        | "iny"
+        | "jmp" label
+        | "jsr" label
+        | "lda" (imm | zp | zpx | abs | absx | absy | indx | indy)
+        | "ldx" (imm | zp | zpy | abs | absy)
+        | "ldy" (imm | zp | zpx | abs | absx)
+		| "lsr" (acc | zp | zpx | abs | absx)
+        | "nop"
+        | "ora" (imm | zp | zpx | abs | absx | absy | indx | indy)
+        | "pha"
+        | "php"
+        | "pla"
+        | "plp"
+        | "rol" (acc | zp | zpx | abs | absx)
+        | "ror" (acc | zp | zpx | abs | absx)
+        | "rti"
+        | "rts"
+        | "sbc" (imm | zp | zpx | abs | absx | absy | indx | indy)
+        | "sec"
+        | "sed"
+        | "sei"
+        | "sta" (zp | zpx | abs | absx | absy | indx | indy)
+        | "stx" (zp | zpy | abs)
+        | "sty" (zp | zpx | abs)
+        | "tax"
+        | "tay"
+        | "tsx"
+        | "txa"
+        | "txs"
+        | "tya"
+        | "db" ((number | string) % ",")  (init data)
+        | "esc" imm
+
+
+acc: "a"
+imm: "#" expr
+zp: expr
+zpx: expr "," "x"
+zpy: expr "," "y"
+abs: expr
+absx: expr "," "x"
+absy: expr "," "y"
+indx: "(" expr "," "x" ")"
+indy: "(" expr ")" "," "y"
+
+expression: term (operator expression)?
+term: uop? term2
+term2: "(" expresion ")" | number   
+uop: "+" | "-"
+operator: "<<" | ">>" | "*" | "/" | "+" | "-"
+
+label: '\.[a-z0-9_]+' | identifier
+identifier: '[a-z_][a-z0-9_]*'
+number: '\$[0-9a-f]+' | '%[0-1\+ | [0-9]+'
+string: '\"(.-[$\"])*?\"' (preserve case)
+
+whitespace: ' \t\v' | ';(.-$)*'
+
+
+
+
+        target x86-64
+
+entry:
+    	ldx #0
+.again:	 lda string,x
+         beq .done
+         brk #1
+         inx
+        jmp .again
+        rts
+
+        org 0
+string: db "Hello World!",0
+
+
+
+

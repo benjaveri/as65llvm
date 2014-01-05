@@ -1,0 +1,13 @@
+boost parser -> AST -> LLVM IR -> assembly/executable
+
+great reference: http://nesdev.com/6502.txt
+
+each instruction translates to it's speci implementation in IR, leaving
+ it up to llvm optimizer to make code better. could also have implented
+ a bunch of calls to instruction implementations, but that is no fun!
+
+use .org and db to initialize data ram
+db does not emit to code space
+code does not emit to ram; code does not advance .org
+
+
