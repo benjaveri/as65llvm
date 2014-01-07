@@ -1,6 +1,7 @@
+NOW
+
 [ ] set up project files, notices & text files. get into github
 [ ] create an xcode project and link in llvm & boost
-[ ] create a standalone make file for same
 [ ] put a test environment together
 [ ] write a simple parser test, useful as sandbox
 [ ] write a simple llvm IR generator, useful as sandbox
@@ -9,3 +10,7 @@
 [ ] implement parser/translator to AST
 [ ] implement code generators for AST
 [ ] bind to llvm
+
+
+EVENTUALLY / MAYBE
+[ ] create a standalone make file and/or linux build instructions

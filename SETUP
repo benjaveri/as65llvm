@@ -1,0 +1,44 @@
+M A C  O S  X  (Mavericks / 10.9)
+=================================
+
+- install xcode 5
+- download boost version 1.55.0 here
+- download llvm 3.4 (named clang for darwin) here http://llvm.org/releases/download.html
+
+
+INSTALLING BOOST
+boost needs to be rebuilt with libc++ to work with apple's clang
+- untar boost package into a temp folder
+$ cd boost_1_55_0
+$ ./bootstrap.sh --prefix=/opt/boost-1.55.0
+$ ./b2 clean
+$ ./b2 toolset=clang cxxflags="-stdlib=libc++" linkflags="-stdlib=libc++" 
+$ cd ..
+- move folder to /opt/boost-1.55.0
+
+
+INSTALLING LLVM
+- simply untar the binaries into /opt folder
+- rename to /opt/llvm-3.4
+
+
+XCODE
+- the xcode project already has the following, but for posterity, here is how
+  I set the project up
+- create a new OSX command line tool project, C++ flavor
+- add /opt/boost-1.55.0 to the include search path
+- add /opt/boost-1.55.0/stage/lib to the library search path
+- create a Run Script build phase, move it to before compilation.
+- Copy & paste this script:
+LLVM_XCCONFIG="llvm.xcconfig"
+LLVM_CXXFLAGS=`/opt/llvm-3.4/bin/llvm-config --cxxflags`
+LLVM_LDFLAGS=`/opt/llvm-3.4/bin/llvm-config --ldflags`" "`/opt/llvm-3.4/bin/llvm-config --libs core`
+echo "// Configuration file for LLVM settings, generated as a build phase." > $LLVM_XCCONFIG
+echo "LLVM_CXXFLAGS = $LLVM_CXXFLAGS" >> $LLVM_XCCONFIG
+echo "LLVM_LDFLAGS = $LLVM_LDFLAGS" >> $LLVM_XCCONFIG
+- output is just "llvm.xcconfig" (no path qualifier)
+- build the project (errors may result, but config file is generated)
+- add llvm.xcconfig to project
+- in the project screen, add this file as the configuration file debug & release builds are based on
+- now add $(LLVM_LDFLAGS) to Other linker flags under Build Settings
+- and add $(LLVM_CXXFLAGS) to Other C++ flags

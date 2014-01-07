@@ -36,6 +36,7 @@ Design details can be found in other ALL-CAPS files in this folder:
  BNF     - shows the assembler's grammar
  LICENSE - the open source license for this project
  NOTICES - notices regarding third party code
+ SETUP   - how to set up the build environment
 
 
 S E T U P
