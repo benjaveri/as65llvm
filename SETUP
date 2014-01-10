@@ -31,7 +31,7 @@ XCODE
 - create a Run Script build phase, move it to before compilation.
 - Copy & paste this script:
 LLVM_XCCONFIG="llvm.xcconfig"
-LLVM_CXXFLAGS=`/opt/llvm-3.4/bin/llvm-config --cxxflags`
+LLVM_CXXFLAGS=`/opt/llvm-3.4/bin/llvm-config --cflags`
 LLVM_LDFLAGS=`/opt/llvm-3.4/bin/llvm-config --ldflags`" "`/opt/llvm-3.4/bin/llvm-config --libs core`
 echo "// Configuration file for LLVM settings, generated as a build phase." > $LLVM_XCCONFIG
 echo "LLVM_CXXFLAGS = $LLVM_CXXFLAGS" >> $LLVM_XCCONFIG

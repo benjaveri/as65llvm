@@ -1,3 +1,5 @@
+** this file to be replaced with parser.h (parser::grammar) **
+
 Unless noted otherwise, all matches are case-insensitive
 
 $$ := EOF

@@ -23,6 +23,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		17C8B1E521E51DEFA2876DD6 /* allTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = allTests.h; sourceTree = "<group>"; };
+		17C8B40AA0551369A13BBCB4 /* parseExprTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseExprTest.h; sourceTree = "<group>"; };
+		17C8B638C78654930F8E74DA /* ast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ast.h; sourceTree = "<group>"; };
+		17C8B717B2D67D8E3C38E4B9 /* parseStringTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseStringTest.h; sourceTree = "<group>"; };
+		17C8B977A64AB22D062D0D6C /* parseValueTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseValueTest.h; sourceTree = "<group>"; };
+		17C8BB0308DA152547F9A605 /* parseNumberTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseNumberTest.h; sourceTree = "<group>"; };
+		17C8BC4588F1037D6D182A86 /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
+		17C8BCFD6C432E54332485A1 /* base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base.h; sourceTree = "<group>"; };
+		17C8BDDFE01973757764D03B /* parseTermTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseTermTest.h; sourceTree = "<group>"; };
 		B56B12FE187BCC45006962F7 /* as65 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = as65; sourceTree = BUILT_PRODUCTS_DIR; };
 		B56B1301187BCC45006962F7 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		B56B130B187BCCA5006962F7 /* llvm.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = llvm.xcconfig; sourceTree = "<group>"; };
@@ -39,6 +48,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		17C8B2C5DC42DC576C5D0862 /* tests */ = {
+			isa = PBXGroup;
+			children = (
+				17C8B1E521E51DEFA2876DD6 /* allTests.h */,
+				17C8B40AA0551369A13BBCB4 /* parseExprTest.h */,
+				17C8B717B2D67D8E3C38E4B9 /* parseStringTest.h */,
+				17C8BB0308DA152547F9A605 /* parseNumberTest.h */,
+				17C8BDDFE01973757764D03B /* parseTermTest.h */,
+				17C8B977A64AB22D062D0D6C /* parseValueTest.h */,
+			);
+			path = tests;
+			sourceTree = "<group>";
+		};
 		B56B12F5187BCC45006962F7 = {
 			isa = PBXGroup;
 			children = (
@@ -60,6 +82,10 @@
 			isa = PBXGroup;
 			children = (
 				B56B1301187BCC45006962F7 /* main.cpp */,
+				17C8BC4588F1037D6D182A86 /* parser.h */,
+				17C8BCFD6C432E54332485A1 /* base.h */,
+				17C8B2C5DC42DC576C5D0862 /* tests */,
+				17C8B638C78654930F8E74DA /* ast.h */,
 			);
 			path = as65;
 			sourceTree = "<group>";
@@ -124,7 +150,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "LLVM_XCCONFIG=\"llvm.xcconfig\"\nLLVM_CXXFLAGS=`/opt/llvm-3.4/bin/llvm-config --cxxflags`\nLLVM_LDFLAGS=`/opt/llvm-3.4/bin/llvm-config --ldflags`\" \"`/opt/llvm-3.4/bin/llvm-config --libs core`\necho \"// Configuration file for LLVM settings, generated as a build phase.\" > $LLVM_XCCONFIG\necho \"LLVM_CXXFLAGS = $LLVM_CXXFLAGS\" >> $LLVM_XCCONFIG\necho \"LLVM_LDFLAGS = $LLVM_LDFLAGS\" >> $LLVM_XCCONFIG";
+			shellScript = "LLVM_XCCONFIG=\"llvm.xcconfig\"\nLLVM_CXXFLAGS=`/opt/llvm-3.4/bin/llvm-config --cflags`\nLLVM_LDFLAGS=`/opt/llvm-3.4/bin/llvm-config --ldflags`\" \"`/opt/llvm-3.4/bin/llvm-config --libs core`\necho \"// Configuration file for LLVM settings, generated as a build phase.\" > $LLVM_XCCONFIG\necho \"LLVM_CXXFLAGS = $LLVM_CXXFLAGS\" >> $LLVM_XCCONFIG\necho \"LLVM_LDFLAGS = $LLVM_LDFLAGS\" >> $LLVM_XCCONFIG";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -213,9 +239,10 @@
 			baseConfigurationReference = B56B130B187BCCA5006962F7 /* llvm.xcconfig */;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
+					"\"$(inherited)\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"/opt/boost-1.55.0",
+					"/opt/llvm-3.4/include",
 				);
 				LIBRARY_SEARCH_PATHS = "/opt/boost-1.55.0/stage/lib";
 				OTHER_CPLUSPLUSFLAGS = (
@@ -232,9 +259,10 @@
 			baseConfigurationReference = B56B130B187BCCA5006962F7 /* llvm.xcconfig */;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
+					"\"$(inherited)\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"/opt/boost-1.55.0",
+					"/opt/llvm-3.4/include",
 				);
 				LIBRARY_SEARCH_PATHS = "/opt/boost-1.55.0/stage/lib";
 				OTHER_CPLUSPLUSFLAGS = (
@@ -265,6 +293,7 @@
 				B56B1309187BCC45006962F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

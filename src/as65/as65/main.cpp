@@ -1,21 +1,17 @@
-//
-//  main.cpp
-//  as65
-//
-//  Created by Ben de Waal on 1/6/14.
-//  Copyright (c) 2014 bronzecastle. All rights reserved.
-//
-#include <llvm/IR/IRBuilder.h>
-#include <boost/random/random_device.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
-
-#include <iostream>
+#include "base.h"
+#include "parser.h"
+#ifdef TEST
+#include "tests/allTests.h"
+#endif
 
 int main(int argc, const char * argv[])
 {
+#ifdef TEST
+    test::AllTests all;
+    if (!all.run()) return -1;
+#endif
 
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    //parser::parse();
     return 0;
 }
 

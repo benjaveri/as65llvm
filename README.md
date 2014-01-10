@@ -1,5 +1,5 @@
-a s 6 5 l l v m
-===============
+as65llvm
+========
 
 A 6502 assembler front-end with an LLVM back-end.
 
@@ -10,22 +10,27 @@ I needed some way to become familiar with the LLVM compiler tools, and decided
 
 Assembled executables can run on any architecture LLVM has back-ends for. This
  means you can run compile code for your x86 machine. We do not emulate a 6502
- processor, so there are some major differences to what you'd expect from the
- numerous emulators out there.
+ processor, so there are some major differences to what you'd expect from real
+ hardware or any of the numerous emulators out there.
 
-We do however have to define a 6502 virtual machine that makes sense in this
- context. Similarities exist mostly with the register and data model (views)
- but it does not translate well to actual code.
+We define a 6502 virtual machine that models data and registers almost exactly.
+ For code, the assembler understands the standard 6502 mnemonics, but they are
+ translated into the target processor's machine code, instead of 6502 code.
+ The target processor's code is managed independently from the 64k addressable
+ data space the 6502 has, so it is unreadable from the VM. Similarly, absolute
+ addressing does not make much sense in this model.
 
 Notes:
  - The VM implements the Harvard Architecture. Code bytes are totally 
-   independent and unreachable. No self-modifying code.
- - Data space is 64k, code space is essentially unlimited.
- - No absolute jumps
+   independent and unreachable. 
+ - Data space is 64k, code space is practically unlimited.
+ - No absolute jumps.
+ - No self-modifying code.
  - Code & data stacks are separate. Data stack uses SP, code stack is 
-   inaccessible (e.g. no absolute jumps by pushing address & RTS)
- - Branches can be as far as needed (there are no code bytes, so no restrictions
-   on encoding relative displacements)
+   managed separately and inaccessible (e.g. no absolute jumps by pushing 
+   address & RTS)
+ - Branches can be as far as needed (there are no 6502 code bytes, so no 
+   restrictions on encoding relative displacements)
  - The VM implements custom escapes to access I/O
 
 Design details can be found in other ALL-CAPS files in this folder:
@@ -37,19 +42,3 @@ Design details can be found in other ALL-CAPS files in this folder:
  LICENSE - the open source license for this project
  NOTICES - notices regarding third party code
  SETUP   - how to set up the build environment
-
-
-S E T U P
-=========
-
-MAC OSX Mavericks
-
-- get lastest xcode
-- using macports (or otherwise), obtain llvm-3.4 and boost (1.55)
-  macports puts llvm include files here: /opt/local/libexec/llvm-3.4/include/llvm
-  macports puts boost files here:  /opt/local/include/boost
-
-Ubuntu Linux 3.10
-
-- use apt-get to get llvm-3.4 and boost (1.55)
-
