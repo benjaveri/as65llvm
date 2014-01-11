@@ -9,6 +9,7 @@
 #include <boost/spirit/include/phoenix_fusion.hpp>
 #include <boost/spirit/include/phoenix_bind.hpp>
 #include <boost/spirit/include/phoenix_stl.hpp>
+#include <boost/spirit/include/phoenix_function.hpp>
 #include "base.h"
 #include "ast.h"
 
@@ -18,9 +19,70 @@ namespace parser {
     namespace repo = boost::spirit::repository;
     namespace ph = boost::phoenix;
 
+    // this class (error_handler) comes from the boost Qi compiler example.
+    // Copyright (c) 2001-2011 Joel de Guzman
+    // http://www.boost.org/LICENSE_1_0.txt
+    template <typename Iterator>
+    struct error_handler
+    {
+        template <typename, typename, typename>
+        struct result { typedef void type; };
+
+        error_handler(Iterator first, Iterator last): first(first), last(last) {}
+
+        template <typename Message, typename What>
+        void operator()(Message const& message,What const& what,Iterator err_pos) const {
+            int line;
+            Iterator line_start = get_pos(err_pos, line);
+            if (err_pos != last) {
+                std::cout << message << what << " line " << line << ':' << std::endl;
+                std::cout << get_line(line_start) << std::endl;
+                for (; line_start != err_pos; ++line_start)
+                    std::cout << ' ';
+                std::cout << '^' << std::endl;
+            } else {
+                std::cout << "Unexpected end of file. ";
+                std::cout << message << what << " line " << line << std::endl;
+            }
+        }
+
+        Iterator get_pos(Iterator err_pos, int& line) const {
+            line = 1;
+            Iterator i = first;
+            Iterator line_start = first;
+            while (i != err_pos)
+            {
+                bool eol = false;
+                if (i != err_pos && *i == '\r') { // CR
+                    eol = true;
+                    line_start = ++i;
+                }
+                if (i != err_pos && *i == '\n') { // LF
+                    eol = true;
+                    line_start = ++i;
+                }
+                if (eol) ++line;
+                else ++i;
+            }
+            return line_start;
+        }
+
+        std::string get_line(Iterator err_pos) const {
+            Iterator i = err_pos;
+            // position i to the next EOL
+            while (i != last && (*i != '\r' && *i != '\n')) ++i;
+            return std::string(err_pos, i);
+        }
+
+        Iterator first;
+        Iterator last;
+        std::vector<Iterator> iters;
+    };
+
+
     template<typename Iterator>
     struct grammar : qi::grammar<Iterator,ast::Program(),ascii::space_type> {
-        grammar() : grammar::base_type(program) {
+        grammar(error_handler<Iterator>& error_handler) : grammar::base_type(program) {
             using boost::spirit::qi::lit;
             using boost::spirit::qi::lexeme;
             using boost::spirit::ascii::char_;
@@ -36,7 +98,7 @@ namespace parser {
             ;
 
             uop             = char_("-+~");
-            binop           = char_("-+*/%&|^");
+            binop           = string("<<") | string(">>") | char_("-+*/%&|^");
             expr            = term >> *exprTail;
             exprTail        = binop > term;
             term            = *uop > value;
@@ -70,11 +132,11 @@ namespace parser {
             identifier.name("identifier");
             qstring.name("string");
 
+            typedef ph::function<parser::error_handler<Iterator>> error_handler_function;
             using namespace qi::labels;
-            qi::on_error<qi::fail>(
-                program,
-                std::cout << "Expected " << _4 << /*" at offset " << (ph::construct<Iterator>(_3)-_1) <<*/ " here '" << ph::construct<std::string>(_3,_2) << "'\n"
-            );
+            qi::on_error<qi::fail>(program,error_handler_function(error_handler)("Error: Expecting ", _4, _3));
+//                std::cout << "Expected " << _4 << /*" at offset " << (ph::construct<Iterator>(_3)-_1) <<*/ " here '" << ph::construct<std::string>(_3,_2) << "'\n"
+//            );
         }
 
         //qi::rule<Iterator> whitespace = char_(" \t") | qi::eol | (';' > *(char_ - qi::eol) > qi::eol);
@@ -101,22 +163,23 @@ namespace parser {
     };
 
     bool parse(std::string storage,ast::Program& out) {
-        grammar<std::string::const_iterator> xu;
-
         using boost::spirit::ascii::space;
         using boost::spirit::qi::parse;
-        std::string::const_iterator iter = storage.begin();
-        std::string::const_iterator end = storage.end();
+
+        typedef std::string::const_iterator Iterator;
+        Iterator iter = storage.begin(),end = storage.end();
+        error_handler<Iterator> error_handler(iter, end);
+        grammar<std::string::const_iterator> xu(error_handler);
         if (qi::phrase_parse(iter,end,xu,space,out)) {
             if (iter==end) {
-                std::cout << "parse succeeded!\n";
+                //std::cout << "parse succeeded!\n";
                 return true;
             } else {
-                std::cout << "input not fully consumed: '" << std::string(iter,end) << "'\n";
+                //std::cout << "input not fully consumed: '" << std::string(iter,end) << "'\n";
                 return false;
             }
         } else {
-            std::cout << "parse failed\n";
+            //std::cout << "parse failed\n";
             return false;
         }
     }

@@ -1,9 +1,5 @@
 NOW
 
-[ ] set up project files, notices & text files. get into github
-[ ] create an xcode project and link in llvm & boost
-[ ] put a test environment together
-[ ] write a simple parser test, useful as sandbox
 [ ] write a simple llvm IR generator, useful as sandbox
 [ ] command line argument parser
 [ ] implement AST
@@ -14,3 +10,10 @@ NOW
 
 EVENTUALLY / MAYBE
 [ ] create a standalone make file and/or linux build instructions
+[ ] convert uop & binop to symbols; use array lookups for precedence & operation
+
+DONE
+[x] set up project files, notices & text files. get into github
+[x] create an xcode project and link in llvm & boost
+[x] put a test environment together
+[x] write a simple parser test, useful as sandbox

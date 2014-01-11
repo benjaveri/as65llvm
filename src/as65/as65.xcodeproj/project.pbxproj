@@ -25,6 +25,7 @@
 /* Begin PBXFileReference section */
 		17C8B1E521E51DEFA2876DD6 /* allTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = allTests.h; sourceTree = "<group>"; };
 		17C8B40AA0551369A13BBCB4 /* parseExprTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseExprTest.h; sourceTree = "<group>"; };
+		17C8B457C2DB9D50D0FF6345 /* eval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = eval.h; sourceTree = "<group>"; };
 		17C8B638C78654930F8E74DA /* ast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ast.h; sourceTree = "<group>"; };
 		17C8B717B2D67D8E3C38E4B9 /* parseStringTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseStringTest.h; sourceTree = "<group>"; };
 		17C8B977A64AB22D062D0D6C /* parseValueTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseValueTest.h; sourceTree = "<group>"; };
@@ -86,6 +87,7 @@
 				17C8BCFD6C432E54332485A1 /* base.h */,
 				17C8B2C5DC42DC576C5D0862 /* tests */,
 				17C8B638C78654930F8E74DA /* ast.h */,
+				17C8B457C2DB9D50D0FF6345 /* eval.h */,
 			);
 			path = as65;
 			sourceTree = "<group>";

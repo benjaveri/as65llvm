@@ -1,35 +1,34 @@
 #include "../base.h"
 #include "../ast.h"
 #include "../parser.h"
+#include "../eval.h"
 
 #include <boost/variant.hpp>
-#include <boost/spirit/include/phoenix_object.hpp>
 
 namespace test {
     namespace ph = boost::phoenix;
 
+    typedef Evaluator::Result Result;
+
     struct ParseTermTest {
         struct TestCase {
             std::string input;
-            boost::variant<
-                unsigned,
-                std::string
-            > expected[8];
+            Result expected[8];
         };
 
         bool run() {
             std::cout << "ParseTermTest\n";
 
-
             TestCase tests[] = {
-                { "+33", {33} },
-                { "-33", {-33} },
                 { "33", {33} },
-                { "x", {"x"} },
+                { "+33", {33} },
+                { "-33,--33,+-33,---33,+-33", {-33,33,-33,-33,-33} },
+                { "x,~x,-~+~-x", {10000,~Result(10000),-~+~-Result(10000)} },
                 //{ "(expr)", {16} }, -- skip this here since it implicitly tests higher level constructs
             };
 
             for (int i = 0; i < sizeof(tests)/sizeof(tests[0]); i++) {
+                // parse test case
                 TestCase& test = tests[i];
                 std::string input = std::string("$$test$$ term ")+test.input;
                 ast::Program output;
@@ -37,30 +36,22 @@ namespace test {
                     return fail(test.input,"failed to parse");
                 }
 
-                std::cout << "skipping ref until we have an evaluator\n";
-                /*
+                // set up evaluation context
+                Evaluator E;
+                E.symtab["x"]=10000;
+
+                // evaluate result(s)
                 if (std::vector<ast::Statement>* s = boost::get<std::vector<ast::Statement>>(&output)) {
                     if (s->size() != 1) return fail(test.input,"unexpected number of statements");
                     if (ast::Test* t = boost::get<ast::Test>(&s->at(0))) {
                         if (ast::TestParseTerm* p = boost::get<ast::TestParseTerm>(t)) {
                             for (int j = 0; j < p->list.size(); j++) {
-                                / *
-                                if (unsigned *ans = boost::get<unsigned>(&p->list.at(j))) {
-                                    if (unsigned *ref = boost::get<unsigned>(&test.expected[j])) {
-                                        if (*ans != *ref) return fail(test.input,"number result mismatch");
-                                    } else return fail(test.input,"type mismatch (1)");
-                                } else if (ast::Identifier *ans = boost::get<ast::Identifier>(&p->list.at(j))) {
-                                    if (std::string *ref = boost::get<std::string>(&test.expected[j])) {
-                                        if (ans->name != *ref) return fail(test.input,"identifer name mismatch");
-                                    } else return fail(test.input,"type mismatch (2)");
-                                } else return fail(test.input,"type mismatch (3)");
-                                * /
-                                return fail(test.input,"NDY");
+                                auto ans = E.evalTerm(p->list.at(j));
+                                if (ans != test.expected[j]) return fail(test.input,"result mismatch");
                             }
                         } else return fail(test.input,"test result type mismatch");
                     } else return fail(test.input,"test type mismatch");
                 } else return fail(test.input,"statement type mismatch");
-                */
             }
 
             return true;
