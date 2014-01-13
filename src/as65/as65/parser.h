@@ -12,73 +12,13 @@
 #include <boost/spirit/include/phoenix_function.hpp>
 #include "base.h"
 #include "ast.h"
+#include "error.h"
 
 namespace parser {
     namespace qi = boost::spirit::qi;
     namespace ascii = boost::spirit::ascii;
     namespace repo = boost::spirit::repository;
     namespace ph = boost::phoenix;
-
-    // this class (error_handler) comes from the boost Qi compiler example.
-    // Copyright (c) 2001-2011 Joel de Guzman
-    // http://www.boost.org/LICENSE_1_0.txt
-    template <typename Iterator>
-    struct error_handler
-    {
-        template <typename, typename, typename>
-        struct result { typedef void type; };
-
-        error_handler(Iterator first, Iterator last): first(first), last(last) {}
-
-        template <typename Message, typename What>
-        void operator()(Message const& message,What const& what,Iterator err_pos) const {
-            int line;
-            Iterator line_start = get_pos(err_pos, line);
-            if (err_pos != last) {
-                std::cout << message << what << " line " << line << ':' << std::endl;
-                std::cout << get_line(line_start) << std::endl;
-                for (; line_start != err_pos; ++line_start)
-                    std::cout << ' ';
-                std::cout << '^' << std::endl;
-            } else {
-                std::cout << "Unexpected end of file. ";
-                std::cout << message << what << " line " << line << std::endl;
-            }
-        }
-
-        Iterator get_pos(Iterator err_pos, int& line) const {
-            line = 1;
-            Iterator i = first;
-            Iterator line_start = first;
-            while (i != err_pos)
-            {
-                bool eol = false;
-                if (i != err_pos && *i == '\r') { // CR
-                    eol = true;
-                    line_start = ++i;
-                }
-                if (i != err_pos && *i == '\n') { // LF
-                    eol = true;
-                    line_start = ++i;
-                }
-                if (eol) ++line;
-                else ++i;
-            }
-            return line_start;
-        }
-
-        std::string get_line(Iterator err_pos) const {
-            Iterator i = err_pos;
-            // position i to the next EOL
-            while (i != last && (*i != '\r' && *i != '\n')) ++i;
-            return std::string(err_pos, i);
-        }
-
-        Iterator first;
-        Iterator last;
-        std::vector<Iterator> iters;
-    };
-
 
     template<typename Iterator>
     struct grammar : qi::grammar<Iterator,ast::Program(),ascii::space_type> {
@@ -89,6 +29,27 @@ namespace parser {
             using boost::spirit::ascii::string;
             using boost::spirit::repository::confix;
 
+            //
+            // symbols
+            //
+            usym.add("+",ast::U_POS);
+            usym.add("-",ast::U_NEG);
+            usym.add("~",ast::U_NOT);
+
+            bsym.add(">>",ast::B_SHR);
+            bsym.add("<<",ast::B_SHL);
+            bsym.add("+",ast::B_ADD);
+            bsym.add("-",ast::B_SUB);
+            bsym.add("*",ast::B_MUL);
+            bsym.add("/",ast::B_DIV);
+            bsym.add("%",ast::B_MOD);
+            bsym.add("&",ast::B_AND);
+            bsym.add("|",ast::B_OR);
+            bsym.add("^",ast::B_XOR);
+
+            //
+            // grammar
+            //
             program         = *statement >> qi::eoi;
             statement       = //qstring
                           //| identifier
@@ -97,11 +58,9 @@ namespace parser {
             #endif
             ;
 
-            uop             = char_("-+~");
-            binop           = string("<<") | string(">>") | char_("-+*/%&|^");
             expr            = term >> *exprTail;
-            exprTail        = binop > term;
-            term            = *uop > value;
+            exprTail        = bsym > term;
+            term            = *usym > value;
             value           = ('(' > expr > ')')
                             | identifier
                             | number;
@@ -122,8 +81,6 @@ namespace parser {
 
             program.name("program");
             statement.name("statement");
-            uop.name("unary operator");
-            binop.name("binary operator");
             expr.name("expression");
             exprTail.name("expression");
             term.name("term");
@@ -139,12 +96,14 @@ namespace parser {
 //            );
         }
 
+        qi::symbols<char,ast::Enum> usym;
+        qi::symbols<char,ast::Enum> bsym;
+        qi::symbols<char,ast::Enum> isym;
+
         //qi::rule<Iterator> whitespace = char_(" \t") | qi::eol | (';' > *(char_ - qi::eol) > qi::eol);
         qi::rule<Iterator,ast::Program(),ascii::space_type> program;
         qi::rule<Iterator,ast::Statement(),ascii::space_type> statement;
 
-        qi::rule<Iterator,std::string(),ascii::space_type> uop;
-        qi::rule<Iterator,std::string(),ascii::space_type> binop;
         qi::rule<Iterator,ast::Expr(),ascii::space_type> expr;
         qi::rule<Iterator,ast::ExprTail(),ascii::space_type> exprTail;
         qi::rule<Iterator,ast::Term(),ascii::space_type> term;

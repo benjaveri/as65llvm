@@ -6,6 +6,45 @@
 #include <boost/variant.hpp>
 
 namespace ast {
+    //
+    // keywords & definitions
+    //
+    enum Enum {
+        U_POS = 0, U_NEG, U_NOT, U_MAX,
+
+        B_ANCHOR = 0,B_ADD, B_SUB, B_MUL, B_DIV, B_MOD, B_AND, B_OR, B_XOR, B_SHL, B_SHR, B_MAX,
+
+        OP_ADC = 0, OP_AND, OP_ASL,
+        OP_BCC, OP_BCS, OP_BEQ, OP_BIT, OP_BMI, OP_BNE, OP_BPL, OP_BRK, OP_BVC, OP_BVS,
+        OP_CLC, OP_CLD, OP_CLI, OP_CLV, OP_CMP, OP_CPX, OP_CPY,
+        OP_DB, OP_DEC, OP_DEX, OP_DEY,
+        OP_EOR, OP_ESC,
+        OP_INC, OP_INX, OP_INY,
+        OP_JMP, OP_JSR,
+        OP_LDA, OP_LDX, OP_LDY, OP_LSR,
+        OP_NOP,
+        OP_ORA,
+        OP_PHA, OP_PHP, OP_PLA, OP_PLP,
+        OP_ROL,
+        OP_ROR, OP_RTI, OP_RTS,
+        OP_SBC, OP_SEC, OP_SED, OP_SEI, OP_STA, OP_STX, OP_STY,
+        OP_TAX, OP_TAY, OP_TSX, OP_TXA, OP_TXS, OP_TYA,
+        OP_MAX,
+
+        M_ACC = 0, M_IMM, M_ZP, M_ZPX, M_ABS, M_ABSX, M_ABSY, M_INDX, M_INDY, M_LABEL, M_MAX,
+    };
+
+    typedef signed long Result;
+    struct UOP { Result (*apply)(const Result a); };
+    struct BINOP { int prec; Result (*apply)(const Result a,const Result b); };
+    struct IOP {};
+    extern UOP uopTable[U_MAX];
+    extern BINOP binopTable[B_MAX];
+    extern IOP iopTable[OP_MAX];
+
+    //
+    // AST structures
+    //
     struct Expr;
     struct Identifier { std::string name; };
     struct QString { std::string value; };
@@ -18,11 +57,11 @@ namespace ast {
         // until all available memory has been exhausted. this is not in the boost docs
     > Value;
     struct Term {
-        std::vector<std::string> uop;
+        std::vector<Enum> uop;
         Value value;
     };
     struct ExprTail {
-        std::string binop;
+        Enum binop;
         Term term;
     };
     struct Expr {
@@ -55,8 +94,8 @@ namespace ast {
 
 BOOST_FUSION_ADAPT_STRUCT(ast::Identifier,(std::string,name))
 BOOST_FUSION_ADAPT_STRUCT(ast::QString,(std::string,value))
-BOOST_FUSION_ADAPT_STRUCT(ast::Term,(std::vector<std::string>,uop)(ast::Value,value))
-BOOST_FUSION_ADAPT_STRUCT(ast::ExprTail,(std::string,binop)(ast::Term,term))
+BOOST_FUSION_ADAPT_STRUCT(ast::Term,(std::vector<ast::Enum>,uop)(ast::Value,value))
+BOOST_FUSION_ADAPT_STRUCT(ast::ExprTail,(ast::Enum,binop)(ast::Term,term))
 BOOST_FUSION_ADAPT_STRUCT(ast::Expr,(ast::Term,term)(std::vector<ast::ExprTail>,tail))
 BOOST_FUSION_ADAPT_STRUCT(ast::TestParseExpr,(std::vector<ast::Expr>,list))
 BOOST_FUSION_ADAPT_STRUCT(ast::TestParseNumber,(std::vector<unsigned>,list))

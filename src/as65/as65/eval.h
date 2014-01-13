@@ -14,17 +14,6 @@ struct Evaluator: public boost::static_visitor<EResult> {
     typedef boost::variant<Result,ast::Expr> SymVal;
 
     std::map<std::string,SymVal> symtab; // symbol table, stored as a result or a subexpression
-    std::map<std::string,int> prec;      // binary operator precedence table
-
-    Evaluator() {
-        prec["*"]=400; prec["'"]=400; prec["%"]=400;
-        prec["+"]=300; prec["-"]=300;
-        prec["<<"]=200; prec[">>"]=200;
-        prec["&"]=120;
-        prec["^"]=110;
-        prec["|"]=100;
-        prec[""]=0; // anchor
-    }
 
     Result evalIdentifier(const ast::Identifier& id) const {
         const auto it = symtab.find(id.name);
@@ -39,50 +28,49 @@ struct Evaluator: public boost::static_visitor<EResult> {
     Result evalTerm(const ast::Term& term) const {
         Result val = evalValue(term.value);
         for (auto it = term.uop.rbegin(); it != term.uop.rend(); it++) {
-            if (*it=="+") {}
-            else if (*it=="-") val = -val;
-            else if (*it=="~") val = ~val;
-            else throw new RuntimeException("Incomplete uop implementation");
+            val = ast::uopTable[*it].apply(val);
         }
         return val;
     }
 
-    // variation of the shunting-yard algorithm
     Result evalExpr(const ast::Expr& expr) const {
-        std::stack<Result> num;
-        std::stack<std::string> opp;
-        opp.push(""); // place anchor
-        num.push(evalTerm(expr.term));
-        for (auto it = expr.tail.begin(); it != expr.tail.end(); it++) {
-            int lp = _bprec(it->binop);
-            while (lp <= _bprec(opp.top())) _bfold(num,opp);
-            opp.push(it->binop);
-            num.push(evalTerm(it->term));
-        }
-        while (!opp.top().empty()) _bfold(num,opp);
-        return num.top();
+        return BinaryEvaluator(*this).eval(expr);
     }
 
 protected:
-    inline int _bprec(std::string op) const { return prec.find(op)->second; }
+    // variation of the shunting-yard algorithm
+    struct BinaryEvaluator {
+        const Evaluator& E;
+        std::stack<Result> num;
+        std::stack<ast::Enum> opp;
 
-    void _bfold(std::stack<Result>& num,std::stack<std::string>& opp) const {
-        std::string& op = opp.top(); opp.pop();
-        Result b = num.top(); num.pop();
-        Result a = num.top(); num.pop();
-        if (op=="+") a += b;
-        else if (op=="-") a -= b;
-        else if (op=="*") a *= b;
-        else if (op=="/") a /= b;
-        else if (op=="%") a %= b;
-        else if (op=="&") a &= b;
-        else if (op=="|") a |= b;
-        else if (op=="^") a ^= b;
-        else if (op=="<<") a <<= b & 63;
-        else if (op==">>") a >>= b & 63;
-        else throw new RuntimeException("Incomplete binop implementation");
-        num.push(a);
-    }
+        BinaryEvaluator(const Evaluator& _):E(_){}
+
+        Result eval(const ast::Expr& expr) {
+            ast::Enum anchor = ast::B_ANCHOR;
+            opp.push(anchor); // place anchor
+            num.push(E.evalTerm(expr.term));
+            for (auto it = expr.tail.begin(); it != expr.tail.end(); it++) {
+                int lp = prec(it->binop);
+                while (lp <= prec(opp.top())) fold();
+                opp.push(it->binop);
+                num.push(E.evalTerm(it->term));
+            }
+            while (opp.top()!=anchor) fold();
+            return num.top();
+        }
+
+        void fold() {
+            ast::Enum op = opp.top(); opp.pop();
+            Result b = num.top(); num.pop();
+            Result a = num.top(); num.pop();
+            Result r = apply(op,a,b);
+            num.push(r);
+        }
+
+        inline int prec(ast::Enum op) { return ast::binopTable[op].prec; }
+        inline Result apply(ast::Enum op,const Result a,const Result b) { return ast::binopTable[op].apply(a,b); }
+    };
 
 public:
     Result operator()(const Result& ee) const {

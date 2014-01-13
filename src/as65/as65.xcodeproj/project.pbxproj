@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17C8BEC4304E520ED79F6EF1 /* ast.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8B04BAE9060AEAEA2ED40 /* ast.cpp */; };
 		B56B1302187BCC45006962F7 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B56B1301187BCC45006962F7 /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -23,10 +24,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		17C8B04BAE9060AEAEA2ED40 /* ast.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ast.cpp; sourceTree = "<group>"; };
 		17C8B1E521E51DEFA2876DD6 /* allTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = allTests.h; sourceTree = "<group>"; };
 		17C8B40AA0551369A13BBCB4 /* parseExprTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseExprTest.h; sourceTree = "<group>"; };
 		17C8B457C2DB9D50D0FF6345 /* eval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = eval.h; sourceTree = "<group>"; };
 		17C8B638C78654930F8E74DA /* ast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ast.h; sourceTree = "<group>"; };
+		17C8B6AD7C727E7C7685FD51 /* error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		17C8B717B2D67D8E3C38E4B9 /* parseStringTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseStringTest.h; sourceTree = "<group>"; };
 		17C8B977A64AB22D062D0D6C /* parseValueTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseValueTest.h; sourceTree = "<group>"; };
 		17C8BB0308DA152547F9A605 /* parseNumberTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseNumberTest.h; sourceTree = "<group>"; };
@@ -88,6 +91,8 @@
 				17C8B2C5DC42DC576C5D0862 /* tests */,
 				17C8B638C78654930F8E74DA /* ast.h */,
 				17C8B457C2DB9D50D0FF6345 /* eval.h */,
+				17C8B04BAE9060AEAEA2ED40 /* ast.cpp */,
+				17C8B6AD7C727E7C7685FD51 /* error.h */,
 			);
 			path = as65;
 			sourceTree = "<group>";
@@ -162,6 +167,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B56B1302187BCC45006962F7 /* main.cpp in Sources */,
+				17C8BEC4304E520ED79F6EF1 /* ast.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
