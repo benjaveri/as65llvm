@@ -31,7 +31,9 @@
 		17C8B638C78654930F8E74DA /* ast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ast.h; sourceTree = "<group>"; };
 		17C8B6AD7C727E7C7685FD51 /* error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		17C8B717B2D67D8E3C38E4B9 /* parseStringTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseStringTest.h; sourceTree = "<group>"; };
+		17C8B726C890405F12E7DE98 /* codeTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = codeTest.h; sourceTree = "<group>"; };
 		17C8B977A64AB22D062D0D6C /* parseValueTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseValueTest.h; sourceTree = "<group>"; };
+		17C8BAA5E5B6B51256D524E3 /* parseInstructionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseInstructionTest.h; sourceTree = "<group>"; };
 		17C8BB0308DA152547F9A605 /* parseNumberTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseNumberTest.h; sourceTree = "<group>"; };
 		17C8BC4588F1037D6D182A86 /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
 		17C8BCFD6C432E54332485A1 /* base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base.h; sourceTree = "<group>"; };
@@ -61,6 +63,8 @@
 				17C8BB0308DA152547F9A605 /* parseNumberTest.h */,
 				17C8BDDFE01973757764D03B /* parseTermTest.h */,
 				17C8B977A64AB22D062D0D6C /* parseValueTest.h */,
+				17C8BAA5E5B6B51256D524E3 /* parseInstructionTest.h */,
+				17C8B726C890405F12E7DE98 /* codeTest.h */,
 			);
 			path = tests;
 			sourceTree = "<group>";

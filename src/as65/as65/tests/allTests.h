@@ -8,6 +8,8 @@
 #include "parseValueTest.h"
 #include "parseTermTest.h"
 #include "parseExprTest.h"
+#include "parseInstructionTest.h"
+#include "codeTest.h"
 
 namespace test {
     struct AllTests {
@@ -35,6 +37,14 @@ namespace test {
             {
                 ParseStringTest t;
                 if (!t.run()) return fail("ParseStringTest");
+            }
+            {
+                ParseInstructionTest t;
+                if (!t.run()) return fail("ParseInstructionTest");
+            }
+            {
+                CodeTest t;
+                if (!t.run()) return fail("CodeTest");
             }
 
             std::cout << "All tests passed\n";

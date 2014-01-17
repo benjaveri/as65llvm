@@ -1,6 +1,7 @@
 #include "../base.h"
 #include "../ast.h"
 #include "../parser.h"
+#include "../eval.h"
 
 namespace test {
     struct ParseExprTest {
@@ -19,7 +20,7 @@ namespace test {
                 { "--3,+$a,10-$A,(4)", {3,10,0,4} },
                 { "-(-4),3*2-5,3+2*-5,3*(-5+2),3+3-3-3,~$f,~(255^($f0|%1111))&12", {4,1,-7,-9,0,~15,12} },
                 { "x-3+(((y)))", {29997} },
-                { "2<<2,8>>2,1<<60>>60", {8,2,1} },
+                { "2<<2,8>>2,1<<60>>60,8<<-2,2>>-2", {8,2,1,2,8} },
             };
 
             for (int i = 0; i < sizeof(tests)/sizeof(tests[0]); i++) {
