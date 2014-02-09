@@ -1,4 +1,6 @@
 #include "base.h"
+
+#if 0
 #include "ast.h"
 
 namespace ast {
@@ -108,3 +110,5 @@ namespace ast {
 //         OP_TAX, OP_TAY, OP_TSX, OP_TXA, OP_TXS, OP_TYA,
 
 }
+
+#endif

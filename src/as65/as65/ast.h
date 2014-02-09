@@ -1,6 +1,8 @@
 #ifndef _node_h
 #define _node_h
 
+#if 0
+
 #include "base.h"
 #include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/variant.hpp>
@@ -207,4 +209,5 @@ BOOST_FUSION_ADAPT_STRUCT(ast::TestParseValue,(std::vector<ast::Value>,list))
 BOOST_FUSION_ADAPT_STRUCT(ast::TestParseTerm,(std::vector<ast::Term>,list))
 BOOST_FUSION_ADAPT_STRUCT(ast::TestParseString,(std::vector<ast::QString>,list))
 
+#endif
 #endif

@@ -1,6 +1,8 @@
 #ifndef _error_h
 #define _error_h
 
+#if 0
+
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/repository/include/qi_confix.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
@@ -80,4 +82,5 @@ namespace parser {
     };
 }
 
+#endif
 #endif

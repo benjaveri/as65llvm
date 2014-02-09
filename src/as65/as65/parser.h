@@ -1,6 +1,8 @@
 #ifndef _parser_h
 #define _parser_h
 
+#if 0
+
 #define BOOST_SPIRIT_DEBUG
 
 #include <boost/spirit/include/qi.hpp>
@@ -190,4 +192,5 @@ namespace parser {
     }
 }
 
+#endif
 #endif

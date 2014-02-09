@@ -1,6 +1,8 @@
 #ifndef _eval_h
 #define _eval_h
 
+#if 0
+
 #include "base.h"
 #include "ast.h"
 
@@ -90,4 +92,5 @@ public:
     }
 };
 
+#endif
 #endif

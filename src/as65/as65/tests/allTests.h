@@ -1,6 +1,8 @@
 #ifndef _all_h
 #define _all_h
 
+#if 0
+
 #include "../base.h"
 #ifdef TEST
 #include "parseStringTest.h"
@@ -57,6 +59,8 @@ namespace test {
         }
     };
 }
+
+#endif
 
 #endif
 #endif
