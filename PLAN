@@ -17,3 +17,6 @@ DONE
 [x] put a test environment together
 [x] create an xcode project and link in llvm & boost
 [x] set up project files, notices & text files. get into github
+
+RESOURCES
+http://nesdev.com/6502.txt

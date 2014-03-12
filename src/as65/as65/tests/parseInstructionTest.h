@@ -109,8 +109,8 @@ namespace test {
                 if (std::vector<ast::Statement>* s = boost::get<std::vector<ast::Statement>>(&output)) {
                     for (auto it=s->begin(); it!=s->end(); it++) {
                         if (ast::Ins* i = boost::get<ast::Ins>(&*it)) {
-                            std::string line = i->toString();
-                            std::cout << line << "\n";
+                            std::wstring line = i->toString();
+                            std::wcout << line << "\n";
 
 //                            if (ast::TestParseExpr* p = boost::get<ast::TestParseExpr>(t)) {
 //                                for (int j = 0; j < p->list.size(); j++) {

@@ -13,7 +13,7 @@ namespace test {
             std::string input;
             boost::variant<
                 unsigned,
-                std::string
+                std::wstring
             > expected[8];
         };
 
@@ -22,7 +22,7 @@ namespace test {
 
             TestCase tests[] = {
                 { "33", {33} },
-                { "x", {"x"} },
+                { "x", {L"x"} },
                 //{ "(expr)", {16} }, -- skip this here since it implicitly tests higher level constructs
             };
 
@@ -44,7 +44,7 @@ namespace test {
                                         if (*ans != *ref) return fail(test.input,"number result mismatch");
                                     } else return fail(test.input,"type mismatch (1)");
                                 } else if (ast::Identifier *ans = boost::get<ast::Identifier>(&p->list.at(j))) {
-                                    if (std::string *ref = boost::get<std::string>(&test.expected[j])) {
+                                    if (std::wstring *ref = boost::get<std::wstring>(&test.expected[j])) {
                                         if (ans->name != *ref) return fail(test.input,"identifer name mismatch");
                                     } else return fail(test.input,"type mismatch (2)");
                                 } else return fail(test.input,"type mismatch (3)");

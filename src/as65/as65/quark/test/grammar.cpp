@@ -9,6 +9,7 @@ namespace quark {
                 if (!orSimpleTest()) return false;
                 if (!succSimpleTest()) return false;
                 if (!CharTest()) return false;
+                if (!FormalTest()) return false;
                 return  true;
             }
 
@@ -31,9 +32,11 @@ namespace quark {
                 }
 
                 {
+                    //Rule::setTrace(true);
+                    //Rule::setFollowRef(true);
                     StringSource ss("123");
                     ParseContext pc(&ss);
-                    Rule int_ = (Lit("1") >> Lit("2") >> Lit("3"))([](Stack&stack)->bool{
+                    Rule int_ = (Lit("1") >> Lit("2") >> Lit("3"))([](Stack& stack)->bool{
                         auto r = stack.aggregateRange().get<std::string>();
                         int i = 0;
                         for (auto it=r.begin(); it!=r.end(); it++) i=i*10+(*it-'0');
@@ -41,7 +44,7 @@ namespace quark {
                         stack.push(i);
                         return true;
                     });
-                    //std::wcout << int_.toString() << "\n";
+                    //std::wcout << int_.toString() << "\n"; std::wcout.flush();
                     if (!int_.parse(pc)) return fail("'int_' parse failed");
                     auto v = pc.stack.back<int>();
                     if (v != 123) return fail("'int_' cast failed");
@@ -170,6 +173,33 @@ namespace quark {
                     if (!rule.parse(pc)) return fail("hex '1fF4' parse failed");
                     auto r = pc.stack.back<unsigned long>();
                     if (r!=8180) return fail("hex '1fF4' stack invalid");
+                }
+                return true;
+            }
+
+            bool FormalTest() {
+                {
+                    //Rule::setTrace(true);
+
+                    Rule rule,fwd;
+
+                    rule = Lit("x") >> Ref(fwd);
+                    fwd  = (Lit("y") >> rule) | Lit("z");
+
+                    rule.name("rule");
+                    rule.fail([](ParseContext& pc)->bool{ std::cout << "rule failed " << pc.source->getPos().s << "\n"; return false; });
+                    fwd.name("fwd");
+                    fwd.fail([](ParseContext& pc)->bool{ std::cout << "fwd failed " << pc.source->getPos().s << "\n"; return false; });
+
+                    //std::wcout << rule.toString() <<"\n";
+                    //std::wcout << fwd.toString() <<"\n";
+
+                    StringSource ss("xyxyxz");
+                    ParseContext pc;
+                    pc.source = &ss;
+                    if (!rule.parse(pc)) return fail("'xyxyxz' parse failed");
+                    auto r = pc.stack.aggregateRange().get<std::string>();
+                    if (r!="xyxyxz") return fail("'xyxyxz' stack invalid");
                 }
                 return true;
             }

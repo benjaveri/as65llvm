@@ -16,6 +16,7 @@ O   OPERATOR            ACTION                              GENERATED ARTIFACTS
     *A                  match zero or more of A             Stack pushed
     +A                  one or more of A matched            Stack pushed
     A % B               one+ A separated by B               Stack pushed for A only
+    &A                  matches but dont consume A          A
 
     Lit(x)              match x literally                   Source::Range
     Eps()               definite match (no consumption)     none

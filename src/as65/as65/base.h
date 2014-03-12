@@ -20,6 +20,6 @@ struct Object {
 };
 
 //inline std::string hex(unsigned u,unsigned w) { std::stringstream s; s << std::setfill("0") << std::setw(w) << std::hex << u; return s.str(); }
-inline std::string dec(unsigned u) { std::stringstream s; s << u; return s.str(); }
+inline std::wstring dec(unsigned u) { std::wstringstream s; s << u; return s.str(); }
 
 #endif

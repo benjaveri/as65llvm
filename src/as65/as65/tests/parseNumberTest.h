@@ -10,6 +10,8 @@ namespace test {
         };
 
         bool run() {
+            parser::Rule::setTrace(true);
+
             std::cout << "ParseNumberTest\n";
 
             TestCase tests[] = {

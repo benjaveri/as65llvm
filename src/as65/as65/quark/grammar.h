@@ -7,15 +7,13 @@
 #include <iostream>
 
 namespace quark {
-    template<typename T>
     struct Grammar {
         Rule start;
+        Rule skipper;
 
-        Grammar(const Rule& _):start(_) {}
-
+        template<typename T>
         bool parse(Source& source,T *out) {
-            std::wcout << start.toString();
-
+            //std::wcout << L"parse: " << start.toString() << L"\n";
             ParseContext pc;
             pc.source = &source;
             bool rv = start.parse(pc);

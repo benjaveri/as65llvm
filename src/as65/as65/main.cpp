@@ -1,24 +1,18 @@
 #include "base.h"
 #include "parser.h"
 #ifdef TEST
-#include "tests/allTests.h"
-#endif
-
-
-
 #include "quark/quark.h"
 #include "quark/test/test.h"
-
+#include "tests/allTests.h"
+#endif
 
 int main(int argc, const char * argv[])
 {
 #ifdef TEST
     quark::test::run();
 
-#if 0
     test::AllTests all;
     if (!all.run()) return -1;
-#endif
 #endif
 
     /*

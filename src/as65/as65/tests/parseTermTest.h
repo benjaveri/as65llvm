@@ -38,7 +38,7 @@ namespace test {
 
                 // set up evaluation context
                 Evaluator E;
-                E.symtab["x"]=10000;
+                E.symtab[L"x"]=10000;
 
                 // evaluate result(s)
                 if (std::vector<ast::Statement>* s = boost::get<std::vector<ast::Statement>>(&output)) {

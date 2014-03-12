@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		17C8B05BAD7C3A3BD20A33E9 /* grammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8BAA28E70AE4A3635694F /* grammar.cpp */; };
 		17C8B06ACA91B5D846C74AC2 /* rule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8B75AA06DC73D9DB83F2E /* rule.cpp */; };
+		17C8B989B4C63E3F28CD53B9 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8B9E03C8F1B5B6C516F2E /* parser.cpp */; };
 		17C8BEC4304E520ED79F6EF1 /* ast.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C8B04BAE9060AEAEA2ED40 /* ast.cpp */; };
 		B56B1302187BCC45006962F7 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B56B1301187BCC45006962F7 /* main.cpp */; };
 /* End PBXBuildFile section */
@@ -27,6 +28,7 @@
 
 /* Begin PBXFileReference section */
 		17C8B04BAE9060AEAEA2ED40 /* ast.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ast.cpp; sourceTree = "<group>"; };
+		17C8B09358C336CAD5D12CE0 /* context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = context.h; sourceTree = "<group>"; };
 		17C8B1E521E51DEFA2876DD6 /* allTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = allTests.h; sourceTree = "<group>"; };
 		17C8B250D3240057B480421E /* source.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = source.h; sourceTree = "<group>"; };
 		17C8B40AA0551369A13BBCB4 /* parseExprTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseExprTest.h; sourceTree = "<group>"; };
@@ -38,9 +40,11 @@
 		17C8B75AA06DC73D9DB83F2E /* rule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rule.cpp; sourceTree = "<group>"; };
 		17C8B977A64AB22D062D0D6C /* parseValueTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseValueTest.h; sourceTree = "<group>"; };
 		17C8B9A61C9D256E09DBFCC4 /* rule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rule.h; sourceTree = "<group>"; };
+		17C8B9E03C8F1B5B6C516F2E /* parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parser.cpp; sourceTree = "<group>"; };
 		17C8BAA28E70AE4A3635694F /* grammar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = grammar.cpp; sourceTree = "<group>"; };
 		17C8BAA5E5B6B51256D524E3 /* parseInstructionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseInstructionTest.h; sourceTree = "<group>"; };
 		17C8BB0308DA152547F9A605 /* parseNumberTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parseNumberTest.h; sourceTree = "<group>"; };
+		17C8BB7BF0296384A0FFA6D4 /* symtab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = symtab.h; sourceTree = "<group>"; };
 		17C8BBF3C06F948BC3BC26D2 /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test.h; sourceTree = "<group>"; };
 		17C8BC4588F1037D6D182A86 /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
 		17C8BCFD6C432E54332485A1 /* base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base.h; sourceTree = "<group>"; };
@@ -96,6 +100,8 @@
 				17C8B250D3240057B480421E /* source.h */,
 				17C8B047DCE9986F9A42091B /* test */,
 				17C8B75AA06DC73D9DB83F2E /* rule.cpp */,
+				17C8BB7BF0296384A0FFA6D4 /* symtab.h */,
+				17C8B09358C336CAD5D12CE0 /* context.h */,
 			);
 			path = quark;
 			sourceTree = "<group>";
@@ -129,6 +135,7 @@
 				17C8B04BAE9060AEAEA2ED40 /* ast.cpp */,
 				17C8B6AD7C727E7C7685FD51 /* error.h */,
 				17C8BCD878DBA9981B2A4DA4 /* quark */,
+				17C8B9E03C8F1B5B6C516F2E /* parser.cpp */,
 			);
 			path = as65;
 			sourceTree = "<group>";
@@ -206,6 +213,7 @@
 				17C8BEC4304E520ED79F6EF1 /* ast.cpp in Sources */,
 				17C8B05BAD7C3A3BD20A33E9 /* grammar.cpp in Sources */,
 				17C8B06ACA91B5D846C74AC2 /* rule.cpp in Sources */,
+				17C8B989B4C63E3F28CD53B9 /* parser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

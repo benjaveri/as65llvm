@@ -1,21 +1,19 @@
 #ifndef _eval_h
 #define _eval_h
 
-#if 0
-
 #include "base.h"
 #include "ast.h"
 
 typedef signed long EResult;
 struct Evaluator: public boost::static_visitor<EResult> {
-    struct Exception { std::string reason; Exception(std::string _):reason(_){} };
-    struct SymbolNotFoundException: public Exception { SymbolNotFoundException(std::string _):Exception(_){} };
-    struct RuntimeException: public Exception { RuntimeException(std::string _):Exception(_){} };
+    struct Exception { std::wstring reason; Exception(std::wstring _):reason(_){} };
+    struct SymbolNotFoundException: public Exception { SymbolNotFoundException(std::wstring _):Exception(_){} };
+    struct RuntimeException: public Exception { RuntimeException(std::wstring _):Exception(_){} };
 
     typedef EResult Result;
     typedef boost::variant<Result,ast::Expr> SymVal;
 
-    std::map<std::string,SymVal> symtab; // symbol table, stored as a result or a subexpression
+    std::map<std::wstring,SymVal> symtab; // symbol table, stored as a result or a subexpression
 
     Result evalIdentifier(const ast::Identifier& id) const {
         const auto it = symtab.find(id.name);
@@ -92,5 +90,4 @@ public:
     }
 };
 
-#endif
 #endif
