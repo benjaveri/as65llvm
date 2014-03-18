@@ -1,4 +1,4 @@
-boost parser -> AST -> LLVM IR -> assembly/executable
+scala parser -> AST -> LLVM IR (as text) -> assembly/executable (using command line llvm)
 
 great reference: http://nesdev.com/6502.txt
 

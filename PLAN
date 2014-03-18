@@ -2,7 +2,6 @@ NOW
 
 [ ] write a simple llvm IR generator, useful as sandbox
 [ ] command line argument parser
-[ ] implement AST
 [ ] implement parser/translator to AST
 [ ] implement code generators for AST
 [ ] bind to llvm
@@ -12,10 +11,7 @@ EVENTUALLY / MAYBE
 [ ] create a standalone make file and/or linux build instructions
 
 DONE
-[ ] convert uop & binop to symbols; use array lookups for precedence & operation
-[x] write a simple parser test, useful as sandbox
-[x] put a test environment together
-[x] create an xcode project and link in llvm & boost
+[x] implement AST
 [x] set up project files, notices & text files. get into github
 
 RESOURCES
