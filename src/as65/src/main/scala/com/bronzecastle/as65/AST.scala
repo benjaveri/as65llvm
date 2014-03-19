@@ -5,10 +5,11 @@ import scala.util.parsing.input.Positional
 object AST {
   case class Program(list: Seq[Statement]) extends Node
 
-  case class Label(name: Identifier) extends Node
 
   trait Statement extends Node
-  case class Ins(label: Label,iop: IOp,operand: Operand) extends Statement
+  case class Label(name: Identifier) extends Statement
+  case class Ins(iop: Mnemonic) extends Statement
+  case class Db(list: List[Value]) extends Statement
 
   trait Mnemonic extends Node {
     def isValidOperand(op: Operand) = (validOperands & op.mask) != 0
@@ -83,7 +84,7 @@ object AST {
   val M_INDX = 32
   val M_INDY = 64
   class Operand(val mask: Int) extends Node
-  case class Acc(value: Value) extends Operand(M_ACC)
+  case class Acc() extends Operand(M_ACC)
   case class Imm(value: Value) extends Operand(M_IMM)
   case class Abs(value: Value) extends Operand(M_ABS)
   case class AbsX(value: Value) extends Operand(M_ABSX)
@@ -98,9 +99,7 @@ object AST {
   case class Identifier(name: String) extends Value
   case class QString(value: String) extends Value
   case class Number(value: BigInt) extends Value
-
   case class Negate(a: Value) extends Value
-
   case class Sum(a: Value,b: Value) extends Value
   case class Diff(a: Value,b: Value) extends Value
   case class Product(a: Value,b: Value) extends Value
@@ -108,8 +107,6 @@ object AST {
   case class Remainder(a: Value,b: Value) extends Value
 
   trait Node extends Positional
-
-  trait IOp // make case classes for all instructions + code gen
 
     /*
     
