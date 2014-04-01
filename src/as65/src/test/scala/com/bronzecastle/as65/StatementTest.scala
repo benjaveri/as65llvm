@@ -6,11 +6,11 @@ import org.junit.Assert._
 @Test
 class StatementTest {
   @Test
-  def testSomething() {
+  def test() {
     class TestCase(validate: ()=>Unit) { def run() = validate() }
     case class NoParseCase(input: String) extends TestCase(()=>{ Grammar.parse(input).right.foreach(v=>assert(false,"Should not parse")) })
     case class PassCase(input: String,result: String) extends TestCase(()=>Grammar.parse(input) match {
-      case Left(e) => fail(e.result.toString)
+      case Left(e) => fail(e.toString)
       case Right(v) => assert (v.toString==result,"Got '"+v.toString+"', expected '"+result+"'")
     })
 

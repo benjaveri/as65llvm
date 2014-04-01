@@ -4,7 +4,7 @@ import scala.util.parsing.combinator.RegexParsers
 import java.io.Reader
 
 object Grammar extends RegexParsers {
-  override protected val whiteSpace = "\\s*|(;.*)".r
+  override protected val whiteSpace = "\\s+|(;.*)".r
 
   lazy val program: Parser[AST.Program] = positioned(
     rep(statement) <~ eoi ^^ { AST.Program }
@@ -19,23 +19,23 @@ object Grammar extends RegexParsers {
 
   lazy val label: Parser[AST.Label] = positioned(identifier <~ ":" ^^ { AST.Label })
 
-  lazy val reserved =
-    "adc" | "and" | "asl" |
-    "bcc" | "bcs" | "beq" | "bit" | "bmi" | "bne" | "bpl" | "brk" | "bvc" | "bvs" |
-    "clc" | "cld" | "cli" | "clv" | "cmp" | "cpx" | "cpy" |
-    "dec" | "dex" | "dey" |
-    "eor" |
-    "inc" | "inx" | "iny" |
-    "jmp" | "jsr" |
-    "lda" | "ldx" | "ldy" | "lsr" |
-    "nop" |
-    "ora" |
-    "pha" | "php" | "pla" | "plp" |
-    "rol" | "ror" | "rti" | "rts" |
-    "sbc" | "sec" | "sed" | "sei" | "sta" |
-    "stx" | "sty" | "tax" | "tay" | "tsx" | "txa" | "txs" | "tya" |
-    "db" |
-    "a" | "x" | "y" // registers
+  lazy val reserved = 
+    "adc\\b".r | "and\\b".r | "asl\\b".r |
+    "bcc\\b".r | "bcs\\b".r | "beq\\b".r | "bit\\b".r | "bmi\\b".r | "bne\\b".r | "bpl\\b".r | "brk\\b".r | "bvc\\b".r | "bvs\\b".r |
+    "clc\\b".r | "cld\\b".r | "cli\\b".r | "clv\\b".r | "cmp\\b".r | "cpx\\b".r | "cpy\\b".r |
+    "dec\\b".r | "dex\\b".r | "dey\\b".r |
+    "eor\\b".r |
+    "inc\\b".r | "inx\\b".r | "iny\\b".r |
+    "jmp\\b".r | "jsr\\b".r |
+    "lda\\b".r | "ldx\\b".r | "ldy\\b".r | "lsr\\b".r |
+    "nop\\b".r |
+    "ora\\b".r |
+    "pha\\b".r | "php\\b".r | "pla\\b".r | "plp\\b".r |
+    "rol\\b".r | "ror\\b".r | "rti\\b".r | "rts\\b".r |
+    "sbc\\b".r | "sec\\b".r | "sed\\b".r | "sei\\b".r | "sta\\b".r |
+    "stx\\b".r | "sty\\b".r | "tax\\b".r | "tay\\b".r | "tsx\\b".r | "txa\\b".r | "txs\\b".r | "tya\\b".r |
+    "db\\b".r |
+    "a\\b".r | "x\\b".r | "y\\b".r // registers
 
   lazy val mnemonic: Parser[AST.Mnemonic] = positioned(
     adc | and | asl |
@@ -112,7 +112,7 @@ object Grammar extends RegexParsers {
   lazy val txs = "txs" ^^ { case _ => AST.TXS() }
   lazy val tya = "tya" ^^ { case _ => AST.TYA() }
 
-  lazy val operand: Parser[AST.Operand] = (acc | imm | indx | indy | absx | absy | abs)
+  lazy val operand: Parser[AST.Operand] = positioned(acc | imm | indx | indy | absx | absy | abs)
   lazy val acc = "a" ^^ { case _ => AST.Acc() }
   lazy val imm = "#" ~> expr ^^ { AST.Imm }
   lazy val absx = expr <~ ","~"[xX]".r ^^ { AST.AbsX }
@@ -172,43 +172,33 @@ object Grammar extends RegexParsers {
   lazy val eol: Parser[String] = "[\r\n]".r
   lazy val eoi: Parser[String] = "$".r
 
-
-  /**
-   * internal parse context
-   */
-  class ParseFailureException(val result: ParseResult[Nothing]) extends Exception
-
   /**
    * parsing entry points
    */
-  def parse(reader: Reader): Either[ParseFailureException,AST.Program] = {
+  def parse(reader: Reader): Either[NoSuccess,AST.Program] = {
     super.parse(program,reader) match {
       case Success(result,next) => Right(result)
-      case e: Error => Left(new ParseFailureException(e))
-      case f: Failure => Left(new ParseFailureException(f))
+      case e: NoSuccess => Left(e)
     }
   }
-  def parse(s: String): Either[ParseFailureException,AST.Program] = {
+  def parse(s: String): Either[NoSuccess,AST.Program] = {
     super.parse(program,s) match {
       case Success(result,next) => Right(result)
-      case e: Error => Left(new ParseFailureException(e))
-      case f: Failure => Left(new ParseFailureException(f))
+      case e: NoSuccess => Left(e)
     }
   }
 
   // used for unit tests mostly
-  def parseExpr(s: String): Either[ParseFailureException,AST.Value] = {
+  def parseExpr(s: String): Either[NoSuccess,AST.Value] = {
     super.parse(expr,s) match {
       case Success(result,next) => Right(result)
-      case e: Error => Left(new ParseFailureException(e))
-      case f: Failure => Left(new ParseFailureException(f))
+      case e: NoSuccess => Left(e)
     }
   }
-  def parseQString(s: String): Either[ParseFailureException,AST.Value] = {
+  def parseQString(s: String): Either[NoSuccess,AST.Value] = {
     super.parse(qstring,s) match {
       case Success(result,next) => Right(result)
-      case e: Error => Left(new ParseFailureException(e))
-      case f: Failure => Left(new ParseFailureException(f))
+      case e: NoSuccess => Left(e)
     }
   }
 }
