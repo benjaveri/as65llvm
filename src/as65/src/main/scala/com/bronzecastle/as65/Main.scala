@@ -4,6 +4,7 @@ import scala.util.parsing.combinator.RegexParsers
 import scala.util.parsing.input.Positional
 import scala.collection.JavaConversions._
 import java.io.File
+import org.apache.commons.io.FilenameUtils
 
 object Main {
   val usage =
@@ -13,6 +14,7 @@ object Main {
       |
       |Options:
       |  -o <filename>    - output filename
+      |  -temp <path>     - path used for temporary files
       |  -llvm <path>     - path to llvm tools
       |
     """.stripMargin
@@ -21,6 +23,7 @@ object Main {
     case class Path(name: String) extends Node
     case class Input(path: Path) extends Node
     case class Output(path: Path) extends Node
+    case class TempPath(path: Path) extends Node
     case class LlvmPath(path: Path) extends Node
   }
   object Grammar extends RegexParsers {
@@ -30,6 +33,7 @@ object Main {
     lazy val input = positioned(path ^^ { AST.Input })
     lazy val switch = positioned(
       "-o" ~> path ^^ { AST.Output } |
+      "-temp" ~> path ^^ { AST.TempPath } |
       "-llvm" ~> path ^^ { AST.LlvmPath }
     )
 
@@ -62,6 +66,7 @@ object Main {
       case Right(cl) => {
         // extract command line arguments
         var llvm: Option[LLVM] = None
+        var temp: Option[String] = None
         var output: Option[String] = None
         var input = List[String]()
         cl.foreach({
@@ -74,17 +79,22 @@ object Main {
             llvm.foreach(x=>{ println("More than one llvm path specified"); return 3 })
             llvm = Some(new LLVM(Some(l.name)))
           }
+          case AST.TempPath(l) => {
+            temp.foreach(x=>{ println("More than one temporary path specified"); return 3 })
+            temp = Some(l.name)
+          }
         })
 
         // validation
         if (input.isEmpty) { println("No input files specified"); return 4 }
 
         // defaults
-        if (output.isEmpty) output = Some(input(0).replaceAll("\\.[^.]*$", "")) // drop extension
+        if (output.isEmpty) output = Some(FilenameUtils.getBaseName(input(0)))
+        if (temp.isEmpty) temp = Some(".")
         if (llvm.isEmpty) llvm = Some(new LLVM(None))
 
         // create global program context
-        val prg = new Program(new File(output.get),llvm.get)
+        val prg = new Program(new File(output.get),new File(temp.get),llvm.get)
         try {
           if (prg.readAll(input)) {
             // PASS 1
@@ -95,14 +105,13 @@ object Main {
 
             // emit IR
             prg.emitPreamble()
-            // TODO: here
+            prg.emitProgram()
             prg.emitEpilogue()
             prg.close()
-            prg.compile()
+            prg.link()
           }
         } finally {
           prg.close()
-          prg.cleanup()
         }
 
         0

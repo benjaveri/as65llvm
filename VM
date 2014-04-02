@@ -8,7 +8,9 @@ CODE MODEL
      (assembler allows jumps to defined labels)
      (indirect jump not supported)
  - code stack is separate from data stack (SP) and is inaccessible
- - not relative branch distance limitations
+ - no relative branch distance limitations
+ - no zero page absolute addressing (and ldx #2 lda $ff,x will not wrap)
+ - lda ($ff,x) will wrap at 256 like the real thing
 
 DATA MODEL
  - same as 6502

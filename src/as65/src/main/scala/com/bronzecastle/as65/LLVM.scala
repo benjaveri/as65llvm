@@ -17,15 +17,16 @@ class LLVM(val path: Option[String]) {
     command.!
   }
 
-  def as(input: Seq[String],output: String) = {
+  def opt(input: Seq[String],output: String) = {
     val command = Seq(
-      "as",
-      "-o",output
+      new File(path.get,"opt").getAbsolutePath,
+      "-o",output,
+      "-O3"
     ) ++ input
     command.!
   }
 
-  // gcc can take .s files and link c runtime in (handy for us)
+  // gcc can take .s files and link c runtime in (handy)
   def gcc(input: Seq[String],output: String) = {
     val command = Seq(
       "gcc",
