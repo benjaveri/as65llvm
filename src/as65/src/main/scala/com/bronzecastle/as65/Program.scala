@@ -108,12 +108,20 @@ class Program(val outputFile: File,val buildPath: File,val llvm: LLVM) {
   // temp variable (internal to llvm ir)
   case object Temp {
     case class Value(n: String,t: String) extends Variable(n,t)
-    var tempID = 0
+    var id = 0
     def i1 = { apply("i1") }
     def i8 = { apply("i8") }
     def i16 = { apply("i16") }
     def i32 = { apply("i32") }
-    def apply(t: String) = { tempID += 1; Value("%t"+tempID,t) }
+    def apply(t: String) = { id += 1; Value(s"%t$id",t) }
+  }
+  // labels (internal to llvm ir)
+  case object Label {
+    case class Value(n: String) {
+      def target() { println(s"$n:") }
+    }
+    var id = 0
+    def next = { id += 1; Value(f"%t$id%04x") }
   }
 
   // llvm mnemonics
@@ -143,6 +151,7 @@ class Program(val outputFile: File,val buildPath: File,val llvm: LLVM) {
   ////////////////////////////////////////////////////////////////////////////
 
   case object add extends mnemonic2("add")
+  case object and extends mnemonic2("and")
   case object ashr extends mnemonic2("ashr")
 
   ////////////////////////////////////////////////////////////////////////////
@@ -197,6 +206,10 @@ class Program(val outputFile: File,val buildPath: File,val llvm: LLVM) {
   }
 
   case object lshr extends mnemonic2("lshr")
+
+  ////////////////////////////////////////////////////////////////////////////
+
+  def not(a: Variable) = xor(a,Imm(~0,a.typ3)) // TODO: is there an LLVM 'not'?
 
   ////////////////////////////////////////////////////////////////////////////
 
@@ -266,6 +279,22 @@ class Program(val outputFile: File,val buildPath: File,val llvm: LLVM) {
 
   ////////////////////////////////////////////////////////////////////////////
 
+  case object trunc {
+    def i8(a: Variable) = apply("i8",a)
+    def i16(a: Variable) = apply("i16",a)
+    def i32(a: Variable) = apply("i32",a)
+    def apply(dt: String,a: Variable) = {
+      val rv = Temp(dt)
+      val d0 = rv.name
+      val t0 = a.typ3
+      val a0 = a.name
+      println(s"$d0 = trunc $t0 $a0 to $dt")
+      rv
+    }
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+
   case object zext {
     def i8(a: Variable) = apply("i8",a)
     def i16(a: Variable) = apply("i16",a)
@@ -279,6 +308,10 @@ class Program(val outputFile: File,val buildPath: File,val llvm: LLVM) {
       rv
     }
   }
+
+  ////////////////////////////////////////////////////////////////////////////
+
+  case object xor extends mnemonic2("xor")
 
   ////////////////////////////////////////////////////////////////////////////
 
@@ -307,8 +340,7 @@ class Program(val outputFile: File,val buildPath: File,val llvm: LLVM) {
     println("define i32 @main() #0 {")
     irIndent += 1
     // init registers
-    comment("initialize cpu to power-up state")
-    store(Imm.i8(1),IF)
+    comment("initialize cpu to power-up state (SP=$ff, all flags zero)")
     store(Imm.i8(255),S)
   }
 
@@ -396,6 +428,53 @@ class Program(val outputFile: File,val buildPath: File,val llvm: LLVM) {
 
     comment(currentInputFile.shortname+"("+m.pos.toString+"): "+m.toString)
     m match {
+      case AST.ADC(oper) => {
+        val a8 = load(A)
+        val a16 = zext.i16(a8)
+        val m8 = readOperand(oper)
+        val m16 = zext.i16(m8)
+        val c16 = zext.i16(load(CF))
+        val t16 = add(a16,add(m16,c16))
+        val t8 = trunc.i8(t16)
+
+        val labelBin = Label.next
+        val labelDec = Label.next
+        val labelFin = Label.next
+
+
+
+        make an if then else shortcut for this; also make an if
+
+
+        br(icmp("eq",load(DF),Imm.i8(1)),labelDec,labelBin)
+
+        labelDec.target()
+        // bcd add as binary, if (t&15)>9 add 6; if t>99, add $60
+        // TODO: DF
+        //
+        // if (df) then {
+        //  ra = bcd add
+        //  rcf = bcd carry
+        // } else {
+        br(labelFin)
+
+        labelBin.target()
+        val ra = t8
+        val rcf = trunc.i8(lshr(t16,Imm.i16(8)))
+        br(labelFin)
+
+        labelFin.target()
+        // vf := a8 & m8 has the same sign but t8 does not
+        //    := a8^t8 & ~a8^m8
+        val rvf = lshr(and(xor(a8,t8),not(xor(a8,m8))),Imm.i8(7))
+        store(rvf,VF)
+        store(rcf,CF)
+        updateNZ(ra)
+        store(ra,A)
+      }
+      case AST.CLC() => store(Imm.i8(0),CF)
+      case AST.CLD() => store(Imm.i8(0),DF)
+      case AST.CLI() => store(Imm.i8(0),IF)
       case AST.LDA(oper) => {
         assert(m.isValidOperand(oper))
         val a = readOperand(oper)
@@ -425,11 +504,11 @@ class Program(val outputFile: File,val buildPath: File,val llvm: LLVM) {
       }
       case AST.PHP() => {
         // [S] = NV-BDIZC
-        val s = shl(load(NF),Imm.i8(7))
+        val s = or(shl(load(NF),Imm.i8(7)),Imm.i8(0x20))
         val v = or(s,shl(load(VF),Imm.i8(6)))
         val b = or(v,shl(load(BF),Imm.i8(4)))
         val d = or(b,shl(load(DF),Imm.i8(3)))
-        val i = or(d,shl(load(DF),Imm.i8(2)))
+        val i = or(d,shl(load(IF),Imm.i8(2)))
         val z = or(i,shl(load(ZF),Imm.i8(1)))
         val c = or(z,load(CF))
         val sp0 = load(S)
@@ -449,6 +528,8 @@ class Program(val outputFile: File,val buildPath: File,val llvm: LLVM) {
         updateNZ(a)
       }
       case AST.SEC() => store(Imm.i8(1),CF)
+      case AST.SED() => store(Imm.i8(1),DF)
+      case AST.SEI() => store(Imm.i8(1),IF)
       case AST.STA(oper) => {
         assert(m.isValidOperand(oper))
         writeOperand(load(A),oper)
